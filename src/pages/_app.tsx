@@ -1,6 +1,23 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import { ChakraProvider, Text, ColorModeScript } from "@chakra-ui/react";
+import type { AppProps } from "next/app";
+import Header from "./component/Header";
+import theme from "./theme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+const client = new QueryClient();
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <div>
+      <QueryClientProvider client={client}>
+        <ChakraProvider>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+          <Header />
+          <ReactQueryDevtools />
+          <Text fontSize={"6xl"} color={"red.500"}></Text>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </QueryClientProvider>
+    </div>
+  );
 }
