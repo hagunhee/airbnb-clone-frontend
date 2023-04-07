@@ -10,11 +10,16 @@ import {
   Stack,
   LightMode,
   Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { FaAirbnb, FaMoon, FaSun } from "react-icons/fa";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
+import { logOut } from "../api";
 
 export default function Header() {
   const { userLoading, isLoggedIn, user } = useUser();
@@ -30,7 +35,10 @@ export default function Header() {
     onClose: onSignUpClose,
   } = useDisclosure();
   const Icon = useColorModeValue(FaMoon, FaSun);
-
+  const onLogOut = async () => {
+    const data = await logOut();
+    console.log(data);
+  };
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Stack
@@ -68,7 +76,14 @@ export default function Header() {
               </LightMode>
             </>
           ) : (
-            <Avatar name={user?.name} src={user?.avatar} size={"md"} />
+            <Menu>
+              <MenuButton>
+                <Avatar name={user?.name} src={user?.avatar} size={"md"} />
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={onLogOut}>Log out</MenuItem>
+              </MenuList>
+            </Menu>
           )
         ) : null}
       </HStack>
