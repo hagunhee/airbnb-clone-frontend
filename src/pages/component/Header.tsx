@@ -1,4 +1,7 @@
 import useUser from "@/lib/useUser";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { useToast } from "@chakra-ui/react";
 import {
   Box,
   Button,
@@ -35,10 +38,29 @@ export default function Header() {
     onClose: onSignUpClose,
   } = useDisclosure();
   const Icon = useColorModeValue(FaMoon, FaSun);
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
   const onLogOut = async () => {
+    const toastId = toast({
+      title: "Login out",
+      description: "Sad to see you go...",
+      status: "loading",
+      position: "bottom",
+    });
+
+    /*
     const data = await logOut();
-    console.log(data);
+    */
+    await logOut();
+    queryClient.refetchQueries(["me"]);
+    toast.update(toastId, {
+      status: "success",
+      title: "Done!",
+      description: "See you later!",
+    });
   };
+
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Stack

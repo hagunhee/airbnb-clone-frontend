@@ -14,7 +14,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Header />
           <ReactQueryDevtools />
-          <Text fontSize={"6xl"} color={"red.500"}></Text>
           <Component {...pageProps} />
         </ChakraProvider>
       </QueryClientProvider>
