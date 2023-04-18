@@ -11,6 +11,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import { FaLock, FaUserNinja } from "react-icons/fa";
@@ -27,8 +28,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   name, onChange, onBlur, value, ref를 인자로 받는다.
   watch는 인풋의 값을 감시하는 역할을 한다.
   */
-  const { register, watch } = useForm();
-  console.log(watch());
+
+  interface IForm {
+    username: string;
+    password: string;
+  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data: IForm) => {
+    console.log(data);
+  };
+  console.log(errors);
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
       <ModalOverlay />
@@ -36,7 +49,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         <ModalHeader>Login</ModalHeader>
         <ModalCloseButton></ModalCloseButton>
         {/* 인풋을 정의해주기 위해 ModalBody를 as="form"으로 감싸준다. */}
-        <ModalBody as="form">
+        <ModalBody as="form" onSubmit={handleSubmit(onSubmit)}>
           <VStack>
             <InputGroup>
               <InputLeftElement
@@ -48,9 +61,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               ></InputLeftElement>
               <Input
                 required
-                {...register("username")}
+                {...register("username", { required: "Please write username" })}
                 variant={"filled"}
                 placeholder="Username"
+                isInvalid={Boolean(errors.username?.message)}
               />
             </InputGroup>
             <InputGroup>
@@ -63,10 +77,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               />
               <Input
                 required
-                {...register("password")}
+                {...register("password", { required: "Please write password" })}
                 type="password"
                 variant={"filled"}
                 placeholder="Password"
+                isInvalid={Boolean(errors.password?.message)}
               />
             </InputGroup>
           </VStack>
