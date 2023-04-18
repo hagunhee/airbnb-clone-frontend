@@ -1,4 +1,6 @@
 import { Box, Button, Divider, HStack, Text, VStack } from "@chakra-ui/react";
+import { URLSearchParams } from "next/dist/compiled/@edge-runtime/primitives/url";
+import { useRouter } from "next/router";
 import { FaComment, FaGithub } from "react-icons/fa";
 
 /**
@@ -16,6 +18,13 @@ import { FaComment, FaGithub } from "react-icons/fa";
  */
 
 export default function SocialLogin() {
+  const kakaoParams = {
+    client_id: "917d70ceb814aef01d619274b37904b8",
+    redirect_uri: "http://127.0.0.1:3000/social/kakao",
+    response_type: "code",
+  };
+  const params = new URLSearchParams(kakaoParams).toString();
+
   return (
     <Box mb={4}>
       <HStack my={8}>
@@ -31,11 +40,26 @@ export default function SocialLogin() {
         <Divider />
       </HStack>
       <VStack>
-        <Button w={"100%"} leftIcon={<FaComment />} colorScheme={"yellow"}>
-          Continue with Kakao{" "}
-        </Button>
-        <Button w={"100%"} leftIcon={<FaGithub />} colorScheme={"gray"}>
+        <Button
+          as="a"
+          //scope는 사용자로부터 얻고 싶은 정보 목록을 의미한다.
+          href="https://github.com/login/oauth/authorize?client_id=e81f8485025e328aaeea&scope=read:user,user:email
+
+"
+          w={"100%"}
+          leftIcon={<FaGithub />}
+          colorScheme={"gray"}
+        >
           Continue with Github{" "}
+        </Button>
+        <Button
+          as="a"
+          href={`https://kauth.kakao.com/oauth/authorize?${params}`}
+          w={"100%"}
+          leftIcon={<FaComment />}
+          colorScheme={"yellow"}
+        >
+          Continue with Kakao{" "}
         </Button>
       </VStack>
     </Box>

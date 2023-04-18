@@ -3,7 +3,6 @@ import Room from "./component/Room";
 import RoomSkeleton from "./component/RoomSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { getRooms } from "./api";
-import Link from "next/link";
 import { IRoomList } from "./types";
 export default function Home() {
   // rooms라는 키 아래로 캐시된 데이터를 가져온다.
@@ -14,6 +13,7 @@ export default function Home() {
   // 즉, isLoading이 true이면 데이터를 가져오는 중이라는 의미이다.
 
   const { isLoading, data } = useQuery<IRoomList[]>(["rooms"], getRooms);
+
   return (
     <Grid
       mt={10}
