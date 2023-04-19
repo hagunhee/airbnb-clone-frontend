@@ -1,5 +1,5 @@
 import useUser from "@/lib/useUser";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useToast } from "@chakra-ui/react";
 import {
@@ -11,6 +11,7 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  ToastId,
   LightMode,
   Avatar,
   Menu,
@@ -23,6 +24,7 @@ import { FaAirbnb, FaMoon, FaSun } from "react-icons/fa";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 import { logOut } from "../api";
+import { useRef } from "react";
 
 export default function Header() {
   const { userLoading, isLoggedIn, user } = useUser();
@@ -40,25 +42,30 @@ export default function Header() {
   const Icon = useColorModeValue(FaMoon, FaSun);
   const toast = useToast();
   const queryClient = useQueryClient();
-
+  //useRef는 state에 넎고 싶지 않은 value를 저장할 때 사용.
+  const toastId = useRef<ToastId>();
+  const mutation = useMutation(logOut, {
+    onMutate: () => {
+      toastId.current = toast({
+        title: "Login out",
+        description: "Sad to see you go...",
+        status: "loading",
+        position: "bottom",
+      });
+    },
+    onSuccess: () => {
+      if (toastId.current) {
+        queryClient.refetchQueries(["me"]);
+        toast.update(toastId.current, {
+          status: "success",
+          title: "Done!",
+          description: "See you later!",
+        });
+      }
+    },
+  });
   const onLogOut = async () => {
-    const toastId = toast({
-      title: "Login out",
-      description: "Sad to see you go...",
-      status: "loading",
-      position: "bottom",
-    });
-
-    /*
-    const data = await logOut();
-    */
-    await logOut();
-    queryClient.refetchQueries(["me"]);
-    toast.update(toastId, {
-      status: "success",
-      title: "Done!",
-      description: "See you later!",
-    });
+    mutation.mutate();
   };
 
   const { colorMode, toggleColorMode } = useColorMode();

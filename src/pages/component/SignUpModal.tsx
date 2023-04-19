@@ -14,6 +14,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { FaEnvelope, FaLock, FaUserNinja, FaUserSecret } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+
+interface ISignUpForm {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+}
 
 interface SignUpModalProps {
   isOpen: boolean;
@@ -21,6 +29,8 @@ interface SignUpModalProps {
 }
 
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+  const { register } = useForm<ISignUpForm>();
+
   return (
     <Modal onClose={onClose} isOpen={isOpen}>
       <ModalOverlay />
@@ -71,7 +81,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             </InputGroup>
           </VStack>
           <Button mt={4} colorScheme={"red"} width={"100%"}>
-            Login
+            Sign up
           </Button>
           <SocialLogin />
         </ModalBody>
