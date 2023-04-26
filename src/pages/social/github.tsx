@@ -1,5 +1,5 @@
 import { Text, Heading, VStack, Spinner, useToast } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { githubLogIn } from "../api";
@@ -10,23 +10,35 @@ export default function GithubConfirm() {
   const router = useRouter();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const code = router.query.code;
+
+  const mutation = useMutation(githubLogIn, {
+    onSuccess: () => {
+      toast({
+        title: "welcome back!",
+        description: "Welcome to AirBnB",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.refetchQueries(["me"]);
+      router.push("/");
+    },
+    onError: (error: { message: string }) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+      });
+      router.push("/");
+    },
+  });
   const confirmLogin = async () => {
+    const code = router.query.code;
     if (code) {
-      const status = await githubLogIn(code);
-      if (status === 200) {
-        toast({
-          title: "Welcome!",
-          description: "Welcome to AirBnB",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-        queryClient.refetchQueries(["me"]);
-        router.push("/");
-      }
+      mutation.mutate(code as string);
     }
   };
+
   useEffect(() => {
     confirmLogin();
   }, [router.query.code]);

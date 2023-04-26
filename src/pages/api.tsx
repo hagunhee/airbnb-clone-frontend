@@ -45,7 +45,10 @@ export const githubLogIn = (code: string) =>
         },
       }
     )
-    .then((response) => response.status);
+    .then((response) => response.status)
+    .catch((error) => {
+      error.message;
+    });
 
 export const kakaoLogIn = (code: string) =>
   instance
@@ -76,12 +79,40 @@ export const usernameLogIn = ({
   username,
   password,
 }: IUsernameLoginVariables) =>
-  instance.post(
-    "/users/log-in",
-    { username, password },
-    {
-      headers: {
-        "X-CSRFToken": Cookie.get("csrftoken") || "",
-      },
-    }
-  );
+  instance
+    .post(
+      "/users/log-in",
+      { username, password },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);
+
+export interface ISignUpVariables {
+  username: string;
+  password: string;
+  email: string;
+  name: string;
+}
+export interface ISignUpSuccess {
+  ok: string;
+}
+export interface ISignUpError {
+  error: string;
+}
+
+export const signUp = ({ username, password, email, name }: ISignUpVariables) =>
+  instance
+    .post(
+      "/users/signup",
+      { username, password, email, name },
+      {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken") || "",
+        },
+      }
+    )
+    .then((response) => response.data);
