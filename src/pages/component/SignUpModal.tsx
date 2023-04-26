@@ -26,6 +26,7 @@ interface ISignUpForm {
   email: string;
   username: string;
   password: string;
+  confirmPassword: string;
 }
 
 interface SignUpModalProps {
@@ -38,10 +39,12 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<ISignUpForm>();
   const toast = useToast();
   const queryClient = useQueryClient();
   const [backendErrorMessage, setBackendErrorMessage] = useState("");
+  const password = watch("password");
   const data = {
     name: "name",
     email: "email",
@@ -90,7 +93,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <Input
                 required
                 {...register("username", {
-                  required: "Please write your Username",
+                  required: "Please write your username",
                 })}
                 variant={"filled"}
                 placeholder="Username"
@@ -108,10 +111,30 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                 type={"password"}
                 required
                 {...register("password", {
-                  required: "Please write your Password",
+                  required: "Please write your password",
                 })}
                 variant={"filled"}
                 placeholder="Password"
+              />
+            </InputGroup>
+            <InputGroup>
+              <InputLeftElement
+                children={
+                  <Box color="gray.500">
+                    <FaLock />
+                  </Box>
+                }
+              />
+              <Input
+                type={"password"}
+                required
+                {...register("confirmPassword", {
+                  required: "Please confirm your password",
+                  validate: (value) =>
+                    value === password || "The passwords do not match",
+                })}
+                variant={"filled"}
+                placeholder="Password confirm"
               />
             </InputGroup>
             <InputGroup>
@@ -125,7 +148,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               <Input
                 required
                 {...register("name", {
-                  required: "Please write your Name",
+                  required: "Please write your name",
                 })}
                 variant={"filled"}
                 placeholder="Name"
@@ -149,9 +172,14 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
               />
             </InputGroup>
           </VStack>
+          {errors.password && (
+            <Text color="red.500" textAlign={"center"} fontSize="sm">
+              {errors.password.message}
+            </Text>
+          )}
           {mutation.isError ? (
             <Text color="red.500" textAlign={"center"} fontSize="sm">
-              {mutation.error?.message}
+              {backendErrorMessage}
             </Text>
           ) : null}
           <Button
